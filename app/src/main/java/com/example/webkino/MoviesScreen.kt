@@ -187,13 +187,3 @@ fun MoviesScreen(navController: NavHostController) {
         }
     }
 }
-
-// This is a mock for preview as the screen composable has parameters
-// and Preview design window cannot show components with parameters.
-@Preview
-@Composable
-fun MoviesScreenPreview() {
-    // Create a mock container
-    val navController = rememberNavController()
-    MoviesScreen(navController = navController)
-}

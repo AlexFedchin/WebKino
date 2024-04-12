@@ -40,19 +40,6 @@ fun MovieCard(movie: Movie) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
-
-            // Load image from URL using coroutine
-            LaunchedEffect("https://image.tmdb.org/t/p/w500${movie.poster_path}") {
-                try {
-                    val inputStream = URL("https://image.tmdb.org/t/p/w500${movie.poster_path}").openStream()
-                    val bmp = BitmapFactory.decodeStream(inputStream)
-                    imageBitmap = bmp.asImageBitmap()
-                } catch (e: Exception) {
-                    // Handle error
-                }
-            }
-
             // Display the image if loaded successfully
             movie.poster_image?.let {
                 Image(
@@ -60,7 +47,6 @@ fun MovieCard(movie: Movie) {
                     contentDescription = movie.title,
                     modifier = Modifier.height(130.dp))
             }
-
 
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -82,6 +68,7 @@ fun MovieCard(movie: Movie) {
 }
 
 
+
 //@Preview
 //@Composable
 //fun MovieCardPreview() {
@@ -100,5 +87,6 @@ fun MovieCard(movie: Movie) {
 //        video = false,
 //        vote_average= 8.316,
 //        vote_count = 2676
+//        poster_image =
 //    ))
 //}
