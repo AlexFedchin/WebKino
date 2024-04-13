@@ -73,7 +73,7 @@ fun HomeScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
-                "See Movies",
+                "Movies",
                 fontSize = 18.sp,
                 color = darkGreyColor
             )
