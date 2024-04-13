@@ -1,32 +1,47 @@
 package com.example.webkino
 
 import android.graphics.BitmapFactory
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -96,8 +111,14 @@ data class Movie(
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesScreen(navController: NavHostController) {
+    // Define a state for holding the list of movies
+    val moviesState = remember { mutableStateOf<List<Movie>>(emptyList()) }
+    val movieResponseState = remember { mutableStateOf<MovieResponse?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
     // Create a Retrofit instance
     val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -107,19 +128,22 @@ fun MoviesScreen(navController: NavHostController) {
     // Create an instance of the API service
     val service = retrofit.create(MovieApiService::class.java)
 
-    // Define a state for holding the list of movies
-    val moviesState = remember { mutableStateOf<List<Movie>>(emptyList()) }
-
-    // Function for fetching movie data
+    // Function for fetching movie data and posters
     service.getMovies().enqueue(object : Callback<MovieResponse> {
         override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
             if (response.isSuccessful) {
-                println("Movie data fetched")
-                val movies = response.body()?.results ?: emptyList()
+                val movieResponse = response.body()
+                if (movieResponse != null) {
+                    println(movieResponse.page)
+                    println(movieResponse.total_pages)
+                }
+                val movies = movieResponse?.results ?: emptyList()
                 CoroutineScope(Dispatchers.IO).launch {
                     fetchPosterImagesForMovies(movies)
                     withContext(Dispatchers.Main) {
                         moviesState.value = movies
+                        movieResponseState.value = movieResponse
+                        isLoading = false
                     }
                 }
             }
@@ -133,57 +157,115 @@ fun MoviesScreen(navController: NavHostController) {
                     val bitmap = BitmapFactory.decodeStream(inputStream)
                     val imageBitmap = bitmap.asImageBitmap()
                     movie.poster_image = imageBitmap
-                    println("Images fetched and recorded")
                 } catch (e: Exception) {
                     println(e)
+                    isLoading = false
                 }
             }
         }
 
         override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
             // Error handling
+            isLoading = false
         }
     })
 
-    Box(modifier = Modifier
-        .background(brush = bgGradient)
-        .fillMaxSize())
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
-        // Display the list of movies using LazyColumn
-        LazyColumn(
-            modifier = Modifier
-                .height(600.dp)
-                .fillMaxWidth()
-        ) {
-            items(moviesState.value) { movie ->
-                MovieCard(movie = movie)
-            }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Button to switch to the MoviesScreen
-        Button(
-            onClick = {
-                navController.navigate("homeScreen")
-            },
-            modifier = Modifier
-                .padding(16.dp)
-                .width(300.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = offWhiteColor),
-        ) {
-            Text(
-                "Back",
-                fontSize = 18.sp,
-                color = darkGreyColor
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = darkerGreyColor,
+                    titleContentColor = offWhiteColor
+                ),
+                title = {
+                    Text("Movies", textAlign = TextAlign.Center,)
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigate("homeScreen") }) {
+                        Icon(
+                            tint = offWhiteColor,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                },
             )
+        },
+    ) { innerPadding ->
+        // UI area
+        if (isLoading) {
+            // Show loading indicator if something is loading
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(brush = bgGradient), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = goldenColor)
+            }
+        } else {
+            // Show UI if nothing is loading
+            Box(modifier = Modifier
+                .background(brush = bgGradient)
+                .fillMaxSize()
+                .padding(innerPadding))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp, 0.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                // Display the list of movies using LazyColumn
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(moviesState.value) { movie ->
+                        MovieCard(movie = movie)
+                    }
+                    item() {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            ) {
+                                TextButton(
+                                    onClick = { /*TODO()*/ },
+                                    enabled = (movieResponseState.value?.page!! > 1)
+                                )
+                                {
+                                    Text(
+                                        text = "◄  Previous",
+                                        fontSize = 15.sp,
+                                        color = if (movieResponseState.value?.page!! > 1) goldenColor else darkerGreyColor
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.weight(0.8f))
+
+                                Text(
+                                    text = "${movieResponseState.value?.page} / ${movieResponseState.value?.total_pages}",
+                                    fontSize = 15.sp,
+                                    color = goldenColor
+                                )
+
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                TextButton(
+                                    onClick = { /*TODO()*/ },
+                                    enabled = movieResponseState.value?.page!! != movieResponseState.value?.total_pages!!
+                                ) {
+                                    Text(
+                                        text = "Next  ►",
+                                        fontSize = 15.sp,
+                                        color = if (movieResponseState.value?.page!! != movieResponseState.value?.total_pages!!) goldenColor else darkerGreyColor
+                                    )
+                                }
+                            }
+
+                    }
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            }
         }
     }
 }
