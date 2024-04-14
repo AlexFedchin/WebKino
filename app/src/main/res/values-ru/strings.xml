@@ -8,4 +8,6 @@
     <string name="logo">Логотип</string>
     <string name="previous">Предыдущая</string>
     <string name="next">Следующая</string>
+    <string name="sort_by">Сортир. по</string>
+    <string name="filter">Фильтр</string>
 </resources>

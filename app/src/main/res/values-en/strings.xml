@@ -8,4 +8,6 @@
     <string name="logo">Logo</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
+    <string name="sort_by">Sort by</string>
+    <string name="filter">Filter</string>
 </resources>
