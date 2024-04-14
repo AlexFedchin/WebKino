@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,12 +45,12 @@ fun HomeScreen(navController: NavHostController) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.weight(0.2f))
+        Spacer(modifier = Modifier.weight(0.15f))
 
         // Logo
         Image(
             painter = painterResource(id = R.drawable.logo),
-            contentDescription = "Logo",
+            contentDescription = stringResource(R.string.logo),
             modifier = Modifier.width(250.dp)
         )
         
@@ -68,12 +69,12 @@ fun HomeScreen(navController: NavHostController) {
             // Cinema icon
             Image(
                 painter = painterResource(id = R.drawable.clapperboard),
-                contentDescription = "Cinema icon",
+                contentDescription = stringResource(R.string.movies),
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
-                "Movies",
+                stringResource(R.string.movies),
                 fontSize = 18.sp,
                 color = darkGreyColor
             )
@@ -92,12 +93,12 @@ fun HomeScreen(navController: NavHostController) {
             // Settings icon
             Image(
                 painter = painterResource(id = R.drawable.settings),
-                contentDescription = "Settings icon",
+                contentDescription = stringResource(R.string.settings),
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
-                "Settings",
+                stringResource(R.string.settings),
                 fontSize = 18.sp,
                 color = darkGreyColor
             )
@@ -110,8 +111,10 @@ fun HomeScreen(navController: NavHostController) {
             // Information icon
             Image(
                 painter = painterResource(id = R.drawable.information),
-                contentDescription = "Info icon",
-                modifier = Modifier.size(30.dp).clickable { navController.navigate("settingsScreen") },
+                contentDescription = stringResource(R.string.information),
+                modifier = Modifier
+                    .size(30.dp)
+                    .clickable { navController.navigate("informationScreen") },
             )
         }
 

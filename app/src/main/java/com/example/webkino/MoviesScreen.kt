@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,7 +73,7 @@ interface MovieApiService {
         @Query("include_adult") includeAdult: Boolean = true,
         @Query("include_video") includeVideo: Boolean = false,
         @Query("language") language: String = "en-US",
-        @Query("sort_by") sortBy: String = "popularity.desc" // Default sorting
+        @Query("sort_by") sortBy: String = "popularity.desc"
     ): Call<MovieResponse>
 }
 
@@ -149,14 +150,14 @@ fun MoviesScreen(navController: NavHostController) {
                     titleContentColor = offWhiteColor
                 ),
                 title = {
-                    Text("Movies", textAlign = TextAlign.Center,)
+                    Text(stringResource(R.string.movies), textAlign = TextAlign.Center,)
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate("homeScreen") }) {
                         Icon(
                             tint = offWhiteColor,
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
@@ -198,7 +199,9 @@ fun MoviesScreen(navController: NavHostController) {
                     item() {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth(),
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             TextButton(
@@ -213,7 +216,7 @@ fun MoviesScreen(navController: NavHostController) {
                             )
                             {
                                 Text(
-                                    text = "◄  Previous",
+                                    text = "◄  ${stringResource(id = R.string.previous)}",
                                     fontSize = 15.sp,
                                     color = if (currentPage > 1) goldenColor else darkerGreyColor
                                 )
@@ -242,7 +245,7 @@ fun MoviesScreen(navController: NavHostController) {
                                     ?: 1)))
                             ) {
                                 Text(
-                                    text = "Next  ►",
+                                    text = "${stringResource(id = R.string.next)}  ►",
                                     fontSize = 15.sp,
                                     color = if (currentPage < (movieResponseState.value?.total_pages ?: 1)
                                     ) goldenColor else darkerGreyColor

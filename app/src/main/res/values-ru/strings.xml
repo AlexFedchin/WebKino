@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Настройки</string>
+    <string name="movies">Фильмы</string>
+    <string name="adultContent">Разрешить взрослый контент</string>
+    <string name="information">Информация</string>
+    <string name="back">Назад</string>
+    <string name="logo">Логотип</string>
+    <string name="previous">Предыдущая</string>
+    <string name="next">Следующая</string>
+</resources>
