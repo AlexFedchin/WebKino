@@ -16,22 +16,32 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import retrofit2.Call
 import retrofit2.Callback
@@ -87,6 +98,8 @@ interface MovieApiService {
     ): Call<MovieResponse>
 }
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesScreen(navController: NavHostController) {
@@ -94,9 +107,12 @@ fun MoviesScreen(navController: NavHostController) {
     val moviesState = remember { mutableStateOf<List<Movie>>(emptyList()) }
     val movieResponseState = remember { mutableStateOf<MovieResponse?>(null) }
     var isLoading by remember { mutableStateOf(true) }
-    var currentPage by remember { mutableStateOf(1) } // Variable to hold the current page number
-    var selectedGenres by remember { mutableStateOf(emptyList<Int>()) }
+    var currentPage by remember { mutableIntStateOf(1) } // Variable to hold the current page number
     var selectedSortingMethod by remember { mutableStateOf("popularity.desc") }
+    var selectedGenres by remember { mutableStateOf(listOf<Int>()) }
+    selectedGenres = genres.filter { it.isChecked }.map { it.id }
+
+    var showFiltersDialog by remember { mutableStateOf(false)}
 
     // Create a Retrofit instance
     val retrofit = Retrofit.Builder()
@@ -108,12 +124,13 @@ fun MoviesScreen(navController: NavHostController) {
     val service = retrofit.create(MovieApiService::class.java)
 
     // Function for fetching movie data and posters
-    fun fetchMovies(page: Int = 1, genres: List<Int> = selectedGenres, sortBy: String = selectedSortingMethod) {
-        service.getMovies(page = page, genres = genres.joinToString(","), sortBy = sortBy).enqueue(object : Callback<MovieResponse> {
+    fun fetchMovies(page: Int = currentPage, genres: List<Int> = selectedGenres, sortBy: String = selectedSortingMethod) {
+        service.getMovies(page = page, genres = genres.joinToString("|"), sortBy = sortBy).enqueue(object : Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 if (response.isSuccessful) {
                     val movieResponse = response.body()
                     if (movieResponse != null) {
+                        println(selectedGenres)
                         println(movieResponse.page)
                         println(movieResponse.total_pages)
                     }
@@ -265,7 +282,7 @@ fun MoviesScreen(navController: NavHostController) {
                     }
                 }
 
-                // Filters and sorting part
+                // Display filters and sorting chips
                 Column {
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
@@ -274,8 +291,8 @@ fun MoviesScreen(navController: NavHostController) {
                     ) {
                         Spacer(modifier = Modifier.weight(1f))
                         Chip(
-                            text = stringResource(id = R.string.filter),
-                            onClick = { /* Open genre selection dialog */ },
+                            text = stringResource(R.string.filter),
+                            onClick = { showFiltersDialog = true },
                             image = painterResource(R.drawable.filter)
                         )
                         Spacer(modifier = Modifier.width(50.dp))
@@ -287,37 +304,81 @@ fun MoviesScreen(navController: NavHostController) {
                         Spacer(modifier = Modifier.weight(1f))
                     }
                 }
-                    
+
+                // Display filters dialogs
+                if (showFiltersDialog) {
+                    Dialog(onDismissRequest = { /*TODO*/ }) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(500.dp)
+                                .padding(16.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(offWhiteColor)
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Select genres",
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp,
+                                    color = darkerGreyColor
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .width(250.dp)
+                                        .height(2.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                LazyColumn(modifier = Modifier
+                                    .height(320.dp)
+                                    .fillMaxWidth()) {
+                                    items(genres) { genre ->
+                                        GenreItem(genre = genre)
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(modifier = Modifier.width(250.dp), horizontalArrangement = Arrangement.Center) {
+                                    OutlinedButton(
+                                        onClick = { showFiltersDialog = false },
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.width(110.dp)
+                                    ) {
+                                        Text(text = "Cancel", color = darkerGreyColor)
+                                    }
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Button(
+                                        onClick =
+                                        {
+                                            showFiltersDialog = false
+                                            isLoading = true
+                                            selectedGenres = genres.filter { it.isChecked }.map { it.id }
+                                            fetchMovies(currentPage, selectedGenres, selectedSortingMethod)
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = goldenColor),
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.width(110.dp)
+                                    ) {
+                                        Text(text = "Apply", color = darkerGreyColor)
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-fun Chip(text: String, onClick: () -> Unit, image: Painter) {
-    Box(
-        modifier = Modifier
-            .clickable { onClick() }
-            .background(
-                color = goldenColor,
-                shape = RoundedCornerShape(24.dp)
-            )
-            .padding(horizontal = 16.dp, vertical = 6.dp)
-            .width(100.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Row {
-            Image(
-                painter = image,
-                contentDescription = "Filter",
-                colorFilter = ColorFilter.tint(darkerGreyColor),
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = text, color = darkerGreyColor, fontSize = 15.sp)
-        }
-    }
-}
 
 @Preview
 @Composable

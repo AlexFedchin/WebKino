@@ -28,6 +28,7 @@ fun Navigation() {
         composable( "moviesScreen"){ MoviesScreen(navController)}
         composable( "settingsScreen"){ SettingsScreen(navController)}
         composable( "informationScreen"){ InformationScreen(navController)}
+        //composable( "genreSelectionScreen"){ GenreSelectionScreen(navController) }
 
     }
 }
