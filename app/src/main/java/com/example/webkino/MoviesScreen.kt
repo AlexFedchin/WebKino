@@ -2,6 +2,7 @@ package com.example.webkino
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.webkino.ui.theme.bgGradient
+import com.example.webkino.ui.theme.darkGreyColor
 import com.example.webkino.ui.theme.darkerGreyColor
 import com.example.webkino.ui.theme.goldenColor
 import com.example.webkino.ui.theme.offWhiteColor
@@ -67,6 +69,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.net.URL
+import java.util.Objects.toString
 
 // Define your API key here
 private const val API_KEY = "abf3a6ac8c9d2e33c91d318ea187ea19"
@@ -95,11 +98,9 @@ fun MoviesScreen(navController: NavHostController) {
     val moviesState = remember { mutableStateOf<List<Movie>>(emptyList()) }
     val movieResponseState = remember { mutableStateOf<MovieResponse?>(null) }
     var isLoading by remember { mutableStateOf(true) }
-    var currentPage by remember { mutableIntStateOf(1) } // Variable to hold the current page number
-    var selectedSortingMethod by remember { mutableStateOf("popularity.desc") }
-    // Variable to pass to the Retrofit
-    var selectedGenres by remember { mutableStateOf(listOf<Int>()) }
-    selectedGenres = genres.filter { it.isChecked }.map { it.id }
+    // Variable to hold the current page number
+    var currentPage by remember { mutableIntStateOf(1) }
+
     // Main variable that holds data about genres
     var genres by remember { mutableStateOf(listOf(
         Genre(28, "Action"),
@@ -124,8 +125,25 @@ fun MoviesScreen(navController: NavHostController) {
     ))}
     // Temporary variable to edit while in the genre selection dialog
     var temporaryGenres by remember { mutableStateOf(genres.map { it.copy() }.toList())}
-    // Variable that controls visibility of genres selection variable
+    // Variable that controls visibility of genres selection dialog
     var showFiltersDialog by remember { mutableStateOf(false)}
+    // Variable to pass to Retrofit instance
+    var selectedGenres by remember { mutableStateOf(listOf<Int>()) }
+    selectedGenres = genres.filter { it.isChecked }.map { it.id }
+
+    // Variable that controls visibility of sorting selection dialog
+    var showSortingDialog by remember { mutableStateOf(false)}
+    // Main variable to hold data about sortingMethods
+    var sortingMethods by remember { mutableStateOf(listOf(
+        SortingMethod("popularity.desc", "Popularity (popular first)", true),
+        SortingMethod("popularity.asc", "Popularity (unpopular first)", false),
+        SortingMethod("primary_release_date.desc", "Release date (new first)", false),
+        SortingMethod("primary_release_date.asc", "Release date (old first)", false),
+    ))}
+    // Temporary variable to edit in the sorting method selection dialog
+    var temporarySortingMethods by remember { mutableStateOf(sortingMethods.map { it.copy() }.toList())}
+    // Variable to pass to Retrofit instance
+    var selectedSortingMethod = toString(sortingMethods.filter { it.isSelected }.map { it.id })
 
     // Create a Retrofit instance
     val retrofit = Retrofit.Builder()
@@ -317,10 +335,113 @@ fun MoviesScreen(navController: NavHostController) {
                         // Sorting selection chip
                         Chip(
                             text = stringResource(id = R.string.sort_by),
-                            onClick = { /* Open sorting method selection dialog */ },
+                            onClick =
+                            {
+                                temporarySortingMethods = sortingMethods.map { it.copy() }
+                                showSortingDialog = true
+                            },
                             image = painterResource(R.drawable.sort)
                         )
                         Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+
+                // Show sorting method selection dialog
+                if (showSortingDialog) {
+                    Dialog(onDismissRequest = {}) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(500.dp)
+                                .padding(16.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(offWhiteColor)
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Select sorting method",
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp,
+                                    color = darkerGreyColor
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .width(250.dp)
+                                        .height(2.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .height(320.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    items(temporarySortingMethods) { sortingMethod ->
+                                        var isSelected by remember { mutableStateOf(sortingMethod.isSelected) }
+
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                                .background(color = if (isSelected) darkGreyColor else offWhiteColor)
+                                                .clickable {
+                                                    temporarySortingMethods.forEach { it.isSelected = false }
+                                                    sortingMethod.isSelected = true
+                                                    isSelected = true
+                                                },
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = sortingMethod.name,
+                                                color = if (sortingMethod.isSelected) goldenColor else darkerGreyColor,
+                                                fontSize = 15.sp,
+                                                modifier = Modifier.padding(8.dp)
+                                            )
+                                        }
+                                    }
+                                }
+
+
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(modifier = Modifier.width(250.dp), horizontalArrangement = Arrangement.Center) {
+                                    OutlinedButton(
+                                        onClick =
+                                        {
+                                            showSortingDialog = false
+                                            temporarySortingMethods = sortingMethods.map { it.copy() }
+                                        },
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.width(110.dp)
+                                    ) {
+                                        Text(stringResource(R.string.cancel), color = darkerGreyColor)
+                                    }
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Button(
+                                        onClick =
+                                        {
+                                            showSortingDialog = false
+                                            isLoading = true
+                                            currentPage = 1
+                                            sortingMethods = temporarySortingMethods.map { it.copy() }
+                                            selectedSortingMethod = toString(sortingMethods.filter { it.isSelected }.map { it.id })
+                                            fetchMovies(currentPage, selectedGenres, selectedSortingMethod)
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = goldenColor),
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.width(110.dp)
+                                    ) {
+                                        Text(stringResource(R.string.apply), color = darkerGreyColor)
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                        }
                     }
                 }
 
@@ -403,6 +524,8 @@ fun MoviesScreen(navController: NavHostController) {
         }
     }
 }
+
+
 
 
 @Preview
