@@ -53,9 +53,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.webkino.ui.theme.bgGradient
-import com.example.webkino.ui.theme.darkGreyColor
 import com.example.webkino.ui.theme.darkerGreyColor
 import com.example.webkino.ui.theme.goldenColor
+import com.example.webkino.ui.theme.lightGreyColor
 import com.example.webkino.ui.theme.offWhiteColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,7 +69,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.net.URL
-import java.util.Objects.toString
 
 // Define your API key here
 private const val API_KEY = "abf3a6ac8c9d2e33c91d318ea187ea19"
@@ -86,7 +85,7 @@ interface MovieApiService {
         @Query("include_adult") includeAdult: Boolean = true,
         @Query("include_video") includeVideo: Boolean = false,
         @Query("language") language: String = "en-US",
-        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("sort_by") sortBy: String = "",
         @Query("with_genres") genres: String = ""
     ): Call<MovieResponse>
 }
@@ -131,19 +130,22 @@ fun MoviesScreen(navController: NavHostController) {
     var selectedGenres by remember { mutableStateOf(listOf<Int>()) }
     selectedGenres = genres.filter { it.isChecked }.map { it.id }
 
+
+
     // Variable that controls visibility of sorting selection dialog
     var showSortingDialog by remember { mutableStateOf(false)}
     // Main variable to hold data about sortingMethods
     var sortingMethods by remember { mutableStateOf(listOf(
         SortingMethod("popularity.desc", "Popularity (popular first)", true),
         SortingMethod("popularity.asc", "Popularity (unpopular first)", false),
-        SortingMethod("primary_release_date.desc", "Release date (new first)", false),
-        SortingMethod("primary_release_date.asc", "Release date (old first)", false),
+        SortingMethod("primary_release_date.desc", "Release date (newest first)", false),
+        SortingMethod("primary_release_date.asc", "Release date (oldest first)", false),
     ))}
     // Temporary variable to edit in the sorting method selection dialog
     var temporarySortingMethods by remember { mutableStateOf(sortingMethods.map { it.copy() }.toList())}
     // Variable to pass to Retrofit instance
-    var selectedSortingMethod = toString(sortingMethods.filter { it.isSelected }.map { it.id })
+    var selectedSortingMethod: String? = sortingMethods.find { it.isSelected }?.id
+    println("Selected sorting method:$selectedSortingMethod")
 
     // Create a Retrofit instance
     val retrofit = Retrofit.Builder()
@@ -155,15 +157,15 @@ fun MoviesScreen(navController: NavHostController) {
     val service = retrofit.create(MovieApiService::class.java)
 
     // Function for fetching movie data and posters
-    fun fetchMovies(page: Int = currentPage, genres: List<Int> = selectedGenres, sortBy: String = selectedSortingMethod) {
-        service.getMovies(page = page, genres = genres.joinToString("|"), sortBy = sortBy).enqueue(object : Callback<MovieResponse> {
+    fun fetchMovies(page: Int = currentPage, genres: List<Int> = selectedGenres, sortBy: String? = selectedSortingMethod) {
+        service.getMovies(page = page, genres = genres.joinToString("|"), sortBy = sortBy ?: "popularity.desc").enqueue(object : Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 if (response.isSuccessful) {
                     val movieResponse = response.body()
                     if (movieResponse != null) {
-                        println(selectedGenres)
-                        println(movieResponse.page)
-                        println(movieResponse.total_pages)
+                        println("Sort by:$sortBy")
+                        println("Base url:$BASE_URL")
+                        println("")
                     }
                     val movies = movieResponse?.results ?: emptyList()
                     CoroutineScope(Dispatchers.IO).launch {
@@ -180,14 +182,18 @@ fun MoviesScreen(navController: NavHostController) {
             private suspend fun fetchPosterImagesForMovies(movies: List<Movie>) {
                 // Iterate through each movie and fetch its poster image
                 movies.forEach { movie ->
-                    try {
-                        val inputStream = URL("https://image.tmdb.org/t/p/w500${movie.poster_path}").openStream()
-                        val bitmap = BitmapFactory.decodeStream(inputStream)
-                        val imageBitmap = bitmap.asImageBitmap()
-                        movie.poster_image = imageBitmap
-                    } catch (e: Exception) {
-                        println(e)
-                        isLoading = false
+                    if (movie.poster_path != null) {
+                        try {
+                            val inputStream = URL("https://image.tmdb.org/t/p/w500${movie.poster_path}").openStream()
+                            val bitmap = BitmapFactory.decodeStream(inputStream)
+                            val imageBitmap = bitmap.asImageBitmap()
+                            movie.poster_image = imageBitmap
+                        } catch (e: Exception) {
+                            println(e)
+                            isLoading = false
+                        }
+                    } else {
+                        movie.poster_image = null
                     }
                 }
             }
@@ -239,6 +245,7 @@ fun MoviesScreen(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(innerPadding)
             ) {
+                // List of Movies and page switching
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -352,7 +359,7 @@ fun MoviesScreen(navController: NavHostController) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(500.dp)
+                                .height(320.dp)
                                 .padding(16.dp),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(offWhiteColor)
@@ -375,71 +382,44 @@ fun MoviesScreen(navController: NavHostController) {
                                         .width(250.dp)
                                         .height(2.dp)
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
 
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .height(320.dp)
-                                        .fillMaxWidth()
+                                Column(
+                                    modifier = Modifier.fillMaxWidth().height(220.dp),
+                                    verticalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    items(temporarySortingMethods) { sortingMethod ->
-                                        var isSelected by remember { mutableStateOf(sortingMethod.isSelected) }
+                                    temporarySortingMethods.forEach { sortingMethod ->
+                                        var isSelected by remember { mutableStateOf(false) }
 
-                                        Box(
+                                        Button(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                                                .background(color = if (isSelected) darkGreyColor else offWhiteColor)
-                                                .clickable {
-                                                    temporarySortingMethods.forEach { it.isSelected = false }
-                                                    sortingMethod.isSelected = true
-                                                    isSelected = true
-                                                },
-                                            contentAlignment = Alignment.Center
+                                                .height(40.dp),
+                                            shape = RoundedCornerShape(8.dp),
+                                            onClick = {
+                                                isSelected = true
+                                                temporarySortingMethods.forEach {
+                                                    it.isSelected = false
+                                                }
+                                                showSortingDialog = false
+                                                isLoading = true
+                                                currentPage = 1
+                                                sortingMethods = temporarySortingMethods.map { it.copy() }
+                                                selectedSortingMethod = sortingMethods.find { it.isSelected }?.id
+                                                fetchMovies(currentPage, selectedGenres, selectedSortingMethod)
+                                            },
+                                            colors = ButtonDefaults.buttonColors(containerColor = lightGreyColor)
                                         ) {
                                             Text(
                                                 text = sortingMethod.name,
-                                                color = if (sortingMethod.isSelected) goldenColor else darkerGreyColor,
+                                                color = darkerGreyColor,
                                                 fontSize = 15.sp,
-                                                modifier = Modifier.padding(8.dp)
                                             )
                                         }
                                     }
                                 }
-
-
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Row(modifier = Modifier.width(250.dp), horizontalArrangement = Arrangement.Center) {
-                                    OutlinedButton(
-                                        onClick =
-                                        {
-                                            showSortingDialog = false
-                                            temporarySortingMethods = sortingMethods.map { it.copy() }
-                                        },
-                                        shape = RoundedCornerShape(8.dp),
-                                        modifier = Modifier.width(110.dp)
-                                    ) {
-                                        Text(stringResource(R.string.cancel), color = darkerGreyColor)
-                                    }
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    Button(
-                                        onClick =
-                                        {
-                                            showSortingDialog = false
-                                            isLoading = true
-                                            currentPage = 1
-                                            sortingMethods = temporarySortingMethods.map { it.copy() }
-                                            selectedSortingMethod = toString(sortingMethods.filter { it.isSelected }.map { it.id })
-                                            fetchMovies(currentPage, selectedGenres, selectedSortingMethod)
-                                        },
-                                        colors = ButtonDefaults.buttonColors(containerColor = goldenColor),
-                                        shape = RoundedCornerShape(8.dp),
-                                        modifier = Modifier.width(110.dp)
-                                    ) {
-                                        Text(stringResource(R.string.apply), color = darkerGreyColor)
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(24.dp))
                             }
                         }
                     }

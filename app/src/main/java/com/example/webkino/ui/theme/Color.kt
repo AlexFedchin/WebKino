@@ -15,6 +15,7 @@ val Pink40 = Color(0xFF7D5260)
 val goldenColor = Color(0xFFD4AF37)
 val darkGreyColor = Color(0xFF333333)
 val darkerGreyColor = Color(0xFF222222)
+val lightGreyColor = Color(0xFFE5E5E5)
 val offWhiteColor = Color(0xFFF5F5F5)
 
 // Define BG gradient

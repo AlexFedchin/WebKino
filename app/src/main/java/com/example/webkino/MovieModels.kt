@@ -1,8 +1,6 @@
 package com.example.webkino
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 
 data class MovieResponse(
@@ -39,6 +37,8 @@ data class Genre(
 data class SortingMethod(
     val id: String,
     val name: String,
-    var isSelected: Boolean
+    var isSelected: Boolean = false
 )
+
+
 

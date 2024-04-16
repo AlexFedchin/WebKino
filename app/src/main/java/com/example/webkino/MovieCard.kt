@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,6 +44,13 @@ fun MovieCard(movie: Movie) {
                     contentDescription = movie.title,
                     modifier = Modifier.height(130.dp))
             }
+
+            if (movie.poster_image == null) {
+                Image(
+                    painter = painterResource(id = R.drawable.poster_not_found),
+                    contentDescription = movie.title,
+                    modifier = Modifier.height(130.dp))
+            }
             
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -55,11 +63,16 @@ fun MovieCard(movie: Movie) {
                     fontSize = 20.sp,
                 )
                 Text(
-                    text = "(${movie.release_date.substring(0, 4)})",
+                    text = if (movie.release_date.isNotEmpty()) {
+                        "(${movie.release_date.substring(0, 4)})"
+                    } else {
+                        "(Unknown)"
+                    },
                     style = TextStyle(fontWeight = FontWeight.Normal, color = darkGreyColor),
                     fontSize = 10.sp,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
+
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = movie.overview,
