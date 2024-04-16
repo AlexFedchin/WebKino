@@ -1,5 +1,7 @@
 package com.example.webkino
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 
@@ -34,7 +36,8 @@ data class Genre(
     var isChecked: Boolean = true
 )
 
-val genres = listOf(
+
+var genres = listOf(
     Genre(28, "Action"),
     Genre(12, "Adventure"),
     Genre(16, "Animation"),
@@ -55,3 +58,4 @@ val genres = listOf(
     Genre(10752, "War"),
     Genre(37, "Western")
 )
+

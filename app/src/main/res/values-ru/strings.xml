@@ -8,6 +8,9 @@
     <string name="logo">Логотип</string>
     <string name="previous">Предыдущая</string>
     <string name="next">Следующая</string>
-    <string name="sort_by">Сортир. по</string>
+    <string name="sort_by">Сорт. по</string>
     <string name="filter">Фильтр</string>
+    <string name="apply">Применить</string>
+    <string name="cancel">Отмена</string>
+    <string name="select_genres">Выберите жанры</string>
 </resources>

@@ -1,22 +1,17 @@
 package com.example.webkino
 
 import android.graphics.BitmapFactory
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,8 +22,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -47,10 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,13 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
 import androidx.navigation.compose.rememberNavController
 import com.example.webkino.ui.theme.bgGradient
 import com.example.webkino.ui.theme.darkerGreyColor
@@ -76,6 +59,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
 import java.net.URL
 
 // Define your API key here
@@ -98,8 +88,6 @@ interface MovieApiService {
     ): Call<MovieResponse>
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesScreen(navController: NavHostController) {
@@ -109,9 +97,34 @@ fun MoviesScreen(navController: NavHostController) {
     var isLoading by remember { mutableStateOf(true) }
     var currentPage by remember { mutableIntStateOf(1) } // Variable to hold the current page number
     var selectedSortingMethod by remember { mutableStateOf("popularity.desc") }
+    // Variable to pass to the Retrofit
     var selectedGenres by remember { mutableStateOf(listOf<Int>()) }
     selectedGenres = genres.filter { it.isChecked }.map { it.id }
-
+    // Main variable that holds data about genres
+    var genres by remember { mutableStateOf(listOf(
+        Genre(28, "Action"),
+        Genre(12, "Adventure"),
+        Genre(16, "Animation"),
+        Genre(35, "Comedy"),
+        Genre(80, "Crime"),
+        Genre(99, "Documentary"),
+        Genre(18, "Drama"),
+        Genre(10751, "Family"),
+        Genre(14, "Fantasy"),
+        Genre(36, "History"),
+        Genre(27, "Horror"),
+        Genre(10402, "Music"),
+        Genre(9648, "Mystery"),
+        Genre(10749, "Romance"),
+        Genre(878, "Science Fiction"),
+        Genre(10770, "TV Movie"),
+        Genre(53, "Thriller"),
+        Genre(10752, "War"),
+        Genre(37, "Western")
+    ))}
+    // Temporary variable to edit while in the genre selection dialog
+    var temporaryGenres by remember { mutableStateOf(genres.map { it.copy() }.toList())}
+    // Variable that controls visibility of genres selection variable
     var showFiltersDialog by remember { mutableStateOf(false)}
 
     // Create a Retrofit instance
@@ -290,12 +303,18 @@ fun MoviesScreen(navController: NavHostController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Spacer(modifier = Modifier.weight(1f))
+                        // Genre selection chip
                         Chip(
                             text = stringResource(R.string.filter),
-                            onClick = { showFiltersDialog = true },
+                            onClick =
+                            {
+                                temporaryGenres = genres.map { it.copy() }
+                                showFiltersDialog = true
+                            },
                             image = painterResource(R.drawable.filter)
                         )
-                        Spacer(modifier = Modifier.width(50.dp))
+                        Spacer(modifier = Modifier.width(30.dp))
+                        // Sorting selection chip
                         Chip(
                             text = stringResource(id = R.string.sort_by),
                             onClick = { /* Open sorting method selection dialog */ },
@@ -305,9 +324,9 @@ fun MoviesScreen(navController: NavHostController) {
                     }
                 }
 
-                // Display filters dialogs
+                // Display genre selection dialog
                 if (showFiltersDialog) {
-                    Dialog(onDismissRequest = { /*TODO*/ }) {
+                    Dialog(onDismissRequest = {}) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -322,7 +341,7 @@ fun MoviesScreen(navController: NavHostController) {
                             ) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Select genres",
+                                    stringResource(R.string.select_genres),
                                     textAlign = TextAlign.Center,
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 15.sp,
@@ -339,7 +358,7 @@ fun MoviesScreen(navController: NavHostController) {
                                 LazyColumn(modifier = Modifier
                                     .height(320.dp)
                                     .fillMaxWidth()) {
-                                    items(genres) { genre ->
+                                    items(temporaryGenres) { genre ->
                                         GenreItem(genre = genre)
                                     }
                                 }
@@ -347,11 +366,15 @@ fun MoviesScreen(navController: NavHostController) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Row(modifier = Modifier.width(250.dp), horizontalArrangement = Arrangement.Center) {
                                     OutlinedButton(
-                                        onClick = { showFiltersDialog = false },
+                                        onClick =
+                                        {
+                                            showFiltersDialog = false
+                                            temporaryGenres = genres.map { it.copy() }
+                                        },
                                         shape = RoundedCornerShape(8.dp),
                                         modifier = Modifier.width(110.dp)
                                     ) {
-                                        Text(text = "Cancel", color = darkerGreyColor)
+                                        Text(stringResource(R.string.cancel), color = darkerGreyColor)
                                     }
                                     Spacer(modifier = Modifier.weight(1f))
                                     Button(
@@ -359,6 +382,8 @@ fun MoviesScreen(navController: NavHostController) {
                                         {
                                             showFiltersDialog = false
                                             isLoading = true
+                                            currentPage = 1
+                                            genres = temporaryGenres.map { it.copy() }
                                             selectedGenres = genres.filter { it.isChecked }.map { it.id }
                                             fetchMovies(currentPage, selectedGenres, selectedSortingMethod)
                                         },
@@ -366,7 +391,7 @@ fun MoviesScreen(navController: NavHostController) {
                                         shape = RoundedCornerShape(8.dp),
                                         modifier = Modifier.width(110.dp)
                                     ) {
-                                        Text(text = "Apply", color = darkerGreyColor)
+                                        Text(stringResource(R.string.apply), color = darkerGreyColor)
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
