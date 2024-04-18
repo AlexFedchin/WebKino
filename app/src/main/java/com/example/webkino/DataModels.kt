@@ -1,6 +1,5 @@
 package com.example.webkino
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.ImageBitmap
 
 data class MovieResponse(
@@ -40,5 +39,25 @@ data class SortingMethod(
     var isSelected: Boolean = false
 )
 
+data class MovieDetails(
+    val id: Int,
+    val title: String,
+    val overview: String,
+    val release_date: String,
+    val vote_average: Double,
+    val poster_path: String?,
+    val genres: List<Genre>,
+    val homepage: String?,
+    val imdb_id: String?,
+    val production_countries: List<ProductionCountry>,
+    val status: String,
+    val tagline: String?,
+    var poster_image: ImageBitmap?
+)
+
+data class ProductionCountry(
+    val iso_3166_1: String,
+    val name: String
+)
 
 

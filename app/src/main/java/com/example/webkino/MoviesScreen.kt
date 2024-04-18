@@ -2,7 +2,6 @@ package com.example.webkino
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,10 +70,12 @@ import retrofit2.http.Query
 import java.net.URL
 
 // Define your API key here
-private const val API_KEY = "abf3a6ac8c9d2e33c91d318ea187ea19"
+const val API_KEY = "abf3a6ac8c9d2e33c91d318ea187ea19"
 
 // Define the base URL of the API
-private const val BASE_URL = "https://api.themoviedb.org/3/"
+const val BASE_URL = "https://api.themoviedb.org/3/"
+
+const val BASE_POSTER_URL = "https://image.tmdb.org/t/p/w500"
 
 // Define a Retrofit interface for making API calls
 interface MovieApiService {
@@ -179,12 +180,12 @@ fun MoviesScreen(navController: NavHostController) {
                 }
             }
 
-            private suspend fun fetchPosterImagesForMovies(movies: List<Movie>) {
+            private fun fetchPosterImagesForMovies(movies: List<Movie>) {
                 // Iterate through each movie and fetch its poster image
                 movies.forEach { movie ->
                     if (movie.poster_path != null) {
                         try {
-                            val inputStream = URL("https://image.tmdb.org/t/p/w500${movie.poster_path}").openStream()
+                            val inputStream = URL("$BASE_POSTER_URL${movie.poster_path}").openStream()
                             val bitmap = BitmapFactory.decodeStream(inputStream)
                             val imageBitmap = bitmap.asImageBitmap()
                             movie.poster_image = imageBitmap
@@ -216,7 +217,7 @@ fun MoviesScreen(navController: NavHostController) {
                     titleContentColor = offWhiteColor
                 ),
                 title = {
-                    Text(stringResource(R.string.movies), textAlign = TextAlign.Center,)
+                    Text(stringResource(R.string.movies), textAlign = TextAlign.Center)
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate("homeScreen") }) {
@@ -254,17 +255,18 @@ fun MoviesScreen(navController: NavHostController) {
                 ) {
                     // Display the list of movies using LazyColumn
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                    item() {
-                        Spacer(modifier = Modifier.height(35.dp))
+                    item {
+                        Spacer(modifier = Modifier.height(38.dp))
                     }
                         items(moviesState.value) { movie ->
-                            MovieCard(movie = movie)
+                            MovieCard(movie = movie, navController = navController)
                         }
                         // Display page switching buttons in the bottom of LazyColumn
-                        item() {
+                        item {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
@@ -275,9 +277,9 @@ fun MoviesScreen(navController: NavHostController) {
                                 TextButton(
                                     onClick = {
                                         if (currentPage > 1) {
-                                            currentPage -= 1 // Decrement page number
+                                            currentPage -= 1
                                             isLoading = true
-                                            fetchMovies(currentPage) // Fetch movies for the previous page
+                                            fetchMovies(currentPage)
                                         }
                                     },
                                     enabled = (currentPage > 1)
@@ -329,7 +331,7 @@ fun MoviesScreen(navController: NavHostController) {
                     ) {
                         Spacer(modifier = Modifier.weight(1f))
                         // Genre selection chip
-                        Chip(
+                        FilterChip(
                             text = stringResource(R.string.filter),
                             onClick =
                             {
@@ -340,7 +342,7 @@ fun MoviesScreen(navController: NavHostController) {
                         )
                         Spacer(modifier = Modifier.width(30.dp))
                         // Sorting selection chip
-                        Chip(
+                        FilterChip(
                             text = stringResource(id = R.string.sort_by),
                             onClick =
                             {

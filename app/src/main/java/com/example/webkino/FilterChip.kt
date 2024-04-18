@@ -23,7 +23,7 @@ import com.example.webkino.ui.theme.darkerGreyColor
 import com.example.webkino.ui.theme.goldenColor
 
 @Composable
-fun Chip(text: String, onClick: () -> Unit, image: Painter) {
+fun FilterChip(text: String, onClick: () -> Unit, image: Painter) {
     Box(
         modifier = Modifier
             .clickable { onClick() }

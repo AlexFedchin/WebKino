@@ -1,6 +1,7 @@
 package com.example.webkino
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,16 +22,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.webkino.ui.theme.darkGreyColor
 import com.example.webkino.ui.theme.offWhiteColor
 
 @Composable
-fun MovieCard(movie: Movie) {
+fun MovieCard(movie: Movie, navController: NavController) {
     Card(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(16.dp, 10.dp)
             .fillMaxWidth()
-            .height(175.dp),
+            .height(175.dp).
+            clickable {
+                navController.navigate("movieDetailsScreen/${movie.id}")
+            },
         colors = CardDefaults.cardColors(offWhiteColor)
     ) {
         Row(

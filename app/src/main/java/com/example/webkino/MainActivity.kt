@@ -28,7 +28,10 @@ fun Navigation() {
         composable( "moviesScreen"){ MoviesScreen(navController)}
         composable( "settingsScreen"){ SettingsScreen(navController)}
         composable( "informationScreen"){ InformationScreen(navController)}
-        //composable( "genreSelectionScreen"){ GenreSelectionScreen(navController) }
+        composable( "movieDetailsScreen/{movieId}"){ backStackEntry ->
+            backStackEntry.arguments?.getString("movieId")?.toIntOrNull()
+                ?.let { MovieDetailsScreen(navController = navController, it) }
+        }
 
     }
 }
