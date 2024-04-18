@@ -57,11 +57,13 @@ import com.example.webkino.ui.theme.goldenColor
 import com.example.webkino.ui.theme.offWhiteColor
 import java.util.Locale
 
+var adultContentAllowed : Boolean = false
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: NavHostController) {
     // Define variable to hold adult content selection
-    val adultContentAllowed = remember { mutableStateOf(false)}
+    val switchState = remember { mutableStateOf(adultContentAllowed)}
 //    // Define app's language options
 //    val languageOptions = listOf("English", "Russian")
 //    // Define a variable to hold the currently selected language
@@ -126,8 +128,12 @@ fun SettingsScreen(navController: NavHostController) {
                 Text(text = stringResource(id = R.string.adultContent), fontSize = 18.sp, color = offWhiteColor)
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
-                    checked = adultContentAllowed.value,
-                    onCheckedChange = {adultContentAllowed.value = !adultContentAllowed.value},
+                    checked = switchState.value,
+                    onCheckedChange =
+                    {
+                        switchState.value = !switchState.value
+                        adultContentAllowed = !adultContentAllowed
+                    },
                     colors = SwitchDefaults.colors(checkedTrackColor = goldenColor)
                 )
             }

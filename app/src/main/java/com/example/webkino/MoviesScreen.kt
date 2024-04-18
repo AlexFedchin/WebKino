@@ -82,7 +82,7 @@ interface MovieApiService {
     fun getMovies(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("page") page: Int = 1, // Default page is 1
-        @Query("include_adult") includeAdult: Boolean = true,
+        @Query("include_adult") includeAdult: Boolean = adultContentAllowed,
         @Query("include_video") includeVideo: Boolean = false,
         @Query("language") language: String = "en-US",
         @Query("sort_by") sortBy: String = "",
@@ -389,8 +389,6 @@ fun MoviesScreen(navController: NavHostController) {
                                     verticalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     temporarySortingMethods.forEach { sortingMethod ->
-                                        var isSelected by remember { mutableStateOf(false) }
-
                                         Button(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -398,10 +396,10 @@ fun MoviesScreen(navController: NavHostController) {
                                                 .height(40.dp),
                                             shape = RoundedCornerShape(8.dp),
                                             onClick = {
-                                                isSelected = true
                                                 temporarySortingMethods.forEach {
                                                     it.isSelected = false
                                                 }
+                                                sortingMethod.isSelected = true
                                                 showSortingDialog = false
                                                 isLoading = true
                                                 currentPage = 1
