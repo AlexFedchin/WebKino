@@ -38,7 +38,7 @@ fun FilterChip(text: String, onClick: () -> Unit, image: Painter) {
         Row {
             Image(
                 painter = image,
-                contentDescription = stringResource(R.string.filter_chip),
+                contentDescription = stringResource(R.string.icon),
                 colorFilter = ColorFilter.tint(darkerGreyColor),
                 modifier = Modifier.size(20.dp)
             )

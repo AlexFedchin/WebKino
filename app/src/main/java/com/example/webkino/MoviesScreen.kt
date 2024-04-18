@@ -146,7 +146,6 @@ fun MoviesScreen(navController: NavHostController) {
     var temporarySortingMethods by remember { mutableStateOf(sortingMethods.map { it.copy() }.toList())}
     // Variable to pass to Retrofit instance
     var selectedSortingMethod: String? = sortingMethods.find { it.isSelected }?.id
-    println("Selected sorting method:$selectedSortingMethod")
 
     // Create a Retrofit instance
     val retrofit = Retrofit.Builder()
@@ -163,11 +162,6 @@ fun MoviesScreen(navController: NavHostController) {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 if (response.isSuccessful) {
                     val movieResponse = response.body()
-                    if (movieResponse != null) {
-                        println("Sort by:$sortBy")
-                        println("Base url:$BASE_URL")
-                        println("")
-                    }
                     val movies = movieResponse?.results ?: emptyList()
                     CoroutineScope(Dispatchers.IO).launch {
                         fetchPosterImagesForMovies(movies)
