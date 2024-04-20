@@ -146,7 +146,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
                     titleContentColor = offWhiteColor
                 ),
                 title = {
-                    Text("Details", textAlign = TextAlign.Center)
+                    Text(stringResource(R.string.details), textAlign = TextAlign.Center)
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate("moviesScreen") }) {

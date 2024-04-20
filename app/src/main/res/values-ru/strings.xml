@@ -25,4 +25,25 @@
     <string name="oops">Упс!</string>
     <string name="movie_not_found">Этот фильм не найден.</string>
     <string name="try_again">Пожалуйста, попробуйте ещё раз.</string>
+    <string name="details">Детали</string>
+    <string name="genre_action">Экшн</string>
+    <string name="genre_adventure">Приключения</string>
+    <string name="genre_animation">Анимация</string>
+    <string name="genre_comedy">Комедия</string>
+    <string name="genre_crime">Криминал</string>
+    <string name="genre_documentary">Документальный</string>
+    <string name="genre_drama">Драма</string>
+    <string name="genre_family">Семейный</string>
+    <string name="genre_fantasy">Фантастика</string>
+    <string name="genre_history">Исторический</string>
+    <string name="genre_horror">Ужасы</string>
+    <string name="genre_music">Музыкальный</string>
+    <string name="genre_mystery">Мистика</string>
+    <string name="genre_romance">Романтика</string>
+    <string name="genre_science_fiction">Научная Фантастика</string>
+    <string name="genre_tv_movie">ТВ Фильм</string>
+    <string name="genre_thriller">Триллер</string>
+    <string name="genre_war">Военный</string>
+    <string name="genre_western">Вестерн</string>
+    <string name="select_sorting_method">Выберите метод сортировки</string>
 </resources>

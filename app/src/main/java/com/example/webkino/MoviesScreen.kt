@@ -1,5 +1,6 @@
 package com.example.webkino
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -91,38 +93,66 @@ interface MovieApiService {
     ): Call<MovieResponse>
 }
 
+// Function to initialize genres
+
+
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesScreen(navController: NavHostController) {
+    val saveableStateKey = "MoviesScreenState"
+
     // Define a state for holding the list of movies
     val moviesState = remember { mutableStateOf<List<Movie>>(emptyList()) }
     val movieResponseState = remember { mutableStateOf<MovieResponse?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     // Variable to hold the current page number
     var currentPage by remember { mutableIntStateOf(1) }
-
+    val genreNames = listOf<String>(
+        stringResource(R.string.genre_action),
+        stringResource(R.string.genre_adventure),
+        stringResource(R.string.genre_animation),
+        stringResource(R.string.genre_comedy),
+        stringResource(R.string.genre_crime),
+        stringResource(R.string.genre_documentary),
+        stringResource(R.string.genre_drama),
+        stringResource(R.string.genre_family),
+        stringResource(R.string.genre_fantasy),
+        stringResource(R.string.genre_history),
+        stringResource(R.string.genre_horror),
+        stringResource(R.string.genre_music),
+        stringResource(R.string.genre_mystery),
+        stringResource(R.string.genre_romance),
+        stringResource(R.string.genre_science_fiction),
+        stringResource(R.string.genre_tv_movie),
+        stringResource(R.string.genre_thriller),
+        stringResource(R.string.genre_war),
+        stringResource(R.string.genre_western)
+    )
     // Main variable that holds data about genres
-    var genres by remember { mutableStateOf(listOf(
-        Genre(28, "Action"),
-        Genre(12, "Adventure"),
-        Genre(16, "Animation"),
-        Genre(35, "Comedy"),
-        Genre(80, "Crime"),
-        Genre(99, "Documentary"),
-        Genre(18, "Drama"),
-        Genre(10751, "Family"),
-        Genre(14, "Fantasy"),
-        Genre(36, "History"),
-        Genre(27, "Horror"),
-        Genre(10402, "Music"),
-        Genre(9648, "Mystery"),
-        Genre(10749, "Romance"),
-        Genre(878, "Science Fiction"),
-        Genre(10770, "TV Movie"),
-        Genre(53, "Thriller"),
-        Genre(10752, "War"),
-        Genre(37, "Western")
-    ))}
+    var genres by remember { mutableStateOf(mutableListOf<Genre>()) }
+    // Adding genres to the genres variable
+    LaunchedEffect(Unit) {
+        genres.add(Genre(28, genreNames[0]))
+        genres.add(Genre(12, genreNames[1]))
+        genres.add(Genre(16, genreNames[2]))
+        genres.add(Genre(35, genreNames[3]))
+        genres.add(Genre(80, genreNames[4]))
+        genres.add(Genre(99, genreNames[5]))
+        genres.add(Genre(18, genreNames[6]))
+        genres.add(Genre(10751, genreNames[7]))
+        genres.add(Genre(14, genreNames[8]))
+        genres.add(Genre(36, genreNames[9]))
+        genres.add(Genre(27, genreNames[10]))
+        genres.add(Genre(10402, genreNames[11]))
+        genres.add(Genre(9648, genreNames[12]))
+        genres.add(Genre(10749, genreNames[13]))
+        genres.add(Genre(878, genreNames[14]))
+        genres.add(Genre(10770, genreNames[15]))
+        genres.add(Genre(53, genreNames[16]))
+        genres.add(Genre(10752, genreNames[17]))
+        genres.add(Genre(37, genreNames[18]))
+    }
     // Temporary variable to edit while in the genre selection dialog
     var temporaryGenres by remember { mutableStateOf(genres.map { it.copy() }.toList())}
     // Variable that controls visibility of genres selection dialog
@@ -130,8 +160,6 @@ fun MoviesScreen(navController: NavHostController) {
     // Variable to pass to Retrofit instance
     var selectedGenres by remember { mutableStateOf(listOf<Int>()) }
     selectedGenres = genres.filter { it.isChecked }.map { it.id }
-
-
 
     // Variable that controls visibility of sorting selection dialog
     var showSortingDialog by remember { mutableStateOf(false)}
@@ -202,9 +230,10 @@ fun MoviesScreen(navController: NavHostController) {
         })
     }
 
-
     // Fetch movies for the initial page
-    fetchMovies()
+    LaunchedEffect(Unit) {
+        fetchMovies()
+    }
 
     // Top app bar
     Scaffold(
@@ -370,7 +399,7 @@ fun MoviesScreen(navController: NavHostController) {
                             ) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Select sorting method",
+                                    text = stringResource(R.string.select_sorting_method),
                                     textAlign = TextAlign.Center,
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 15.sp,
@@ -385,7 +414,9 @@ fun MoviesScreen(navController: NavHostController) {
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Column(
-                                    modifier = Modifier.fillMaxWidth().height(220.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(220.dp),
                                     verticalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     temporarySortingMethods.forEach { sortingMethod ->
@@ -482,7 +513,7 @@ fun MoviesScreen(navController: NavHostController) {
                                             showFiltersDialog = false
                                             isLoading = true
                                             currentPage = 1
-                                            genres = temporaryGenres.map { it.copy() }
+                                            genres = temporaryGenres.map { it.copy() }.toMutableList()
                                             selectedGenres = genres.filter { it.isChecked }.map { it.id }
                                             fetchMovies(currentPage, selectedGenres, selectedSortingMethod)
                                         },
