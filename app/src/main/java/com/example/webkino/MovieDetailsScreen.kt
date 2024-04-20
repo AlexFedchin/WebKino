@@ -244,14 +244,14 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
                                 // Display release year
                                 Row {
                                     Text(
-                                        text = "Year: ",
+                                        text = "${stringResource(R.string.year)}: ",
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = offWhiteColor,
                                     )
                                     Spacer(modifier = Modifier.width(2.dp))
                                     Text(
-                                        text = if (movieDetails.release_date.isNotEmpty()) movieDetails.release_date.substring(0, 4) else "Unknown",
+                                        text = if (movieDetails.release_date.isNotEmpty()) movieDetails.release_date.substring(0, 4) else stringResource(R.string.unknown),
                                         fontSize = 14.sp,
                                         color = offWhiteColor,
                                     )
@@ -263,7 +263,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
                                 // Display countries of production
                                 Row {
                                     Text(
-                                        text = "Country: ",
+                                        text = "${stringResource(R.string.country)}: ",
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = offWhiteColor,
@@ -274,7 +274,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
                                         text = if (movieDetails.production_countries.isNotEmpty()) {
                                             movieDetails.production_countries.joinToString(separator = ", ") { it.name }
                                         } else {
-                                            "Unknown"
+                                            stringResource(R.string.unknown)
                                         },
                                         fontSize = 14.sp,
                                         color = offWhiteColor,
@@ -287,7 +287,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
 
                                 Row {
                                     Text(
-                                        text = "Status: ",
+                                        text = "${stringResource(R.string.status)}: ",
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = offWhiteColor,
@@ -297,7 +297,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
 
                                     Text(
                                         text = movieDetails.status.ifEmpty {
-                                            "Unknown"
+                                            stringResource(R.string.unknown)
                                         },
                                         fontSize = 14.sp,
                                         color = offWhiteColor,
@@ -309,7 +309,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
 
                         // Display movie's description
                         Text(
-                            text = "Description:",
+                            text = "${stringResource(R.string.description)}:",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = offWhiteColor,
@@ -317,7 +317,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
                         )
                         Text(
                             text = movieDetails.overview.ifEmpty {
-                                "No description"
+                                stringResource(R.string.no_description)
                             },
                             fontSize = 16.sp,
                             color = offWhiteColor,
@@ -329,7 +329,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
 
                         // Display movie's rating
                         Text(
-                            text = "Rating:",
+                            text = "${stringResource(R.string.rating)}:",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = offWhiteColor,
@@ -360,10 +360,10 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
                                 .padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Oops!", color = offWhiteColor, fontWeight = FontWeight.Bold, fontSize = 40.sp)
+                            Text(text = stringResource(R.string.oops), color = offWhiteColor, fontWeight = FontWeight.Bold, fontSize = 40.sp)
                             Spacer(modifier = Modifier.height(10.dp))
-                            Text(text = "This movie was not found.", color = offWhiteColor, fontSize = 18.sp)
-                            Text(text = "Please, try again.", color = offWhiteColor, fontSize = 18.sp)
+                            Text(text = stringResource(R.string.movie_not_found), color = offWhiteColor, fontSize = 18.sp)
+                            Text(text = stringResource(R.string.try_again), color = offWhiteColor, fontSize = 18.sp)
                         }
                     }
                 }

@@ -15,4 +15,14 @@
     <string name="select_genres">Выберите жанры</string>
     <string name="shoot_movie">Снять свой фильм</string>
     <string name="icon">Иконка</string>
+    <string name="country">Страна</string>
+    <string name="year">Год</string>
+    <string name="description">Описание</string>
+    <string name="rating">Рейтинг</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="status">Статус</string>
+    <string name="no_description">Без описания</string>
+    <string name="oops">Упс!</string>
+    <string name="movie_not_found">Этот фильм не найден.</string>
+    <string name="try_again">Пожалуйста, попробуйте ещё раз.</string>
 </resources>

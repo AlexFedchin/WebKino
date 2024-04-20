@@ -158,11 +158,13 @@ fun MoviesScreen(navController: NavHostController) {
 
     // Function for fetching movie data and posters
     fun fetchMovies(page: Int = currentPage, genres: List<Int> = selectedGenres, sortBy: String? = selectedSortingMethod) {
-        service.getMovies(page = page, genres = genres.joinToString("|"), sortBy = sortBy ?: "popularity.desc").enqueue(object : Callback<MovieResponse> {
+        val includeAdult = adultContentAllowed // Get the current value of adultContentAllowed
+        service.getMovies(page = page, genres = genres.joinToString("|"), sortBy = sortBy ?: "popularity.desc", includeAdult = includeAdult).enqueue(object : Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 if (response.isSuccessful) {
                     val movieResponse = response.body()
                     val movies = movieResponse?.results ?: emptyList()
+                    println(includeAdult)
                     CoroutineScope(Dispatchers.IO).launch {
                         fetchPosterImagesForMovies(movies)
                         withContext(Dispatchers.Main) {
@@ -200,9 +202,11 @@ fun MoviesScreen(navController: NavHostController) {
         })
     }
 
+
     // Fetch movies for the initial page
     fetchMovies()
 
+    // Top app bar
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(

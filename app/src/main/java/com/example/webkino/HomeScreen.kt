@@ -1,6 +1,5 @@
 package com.example.webkino
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,14 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +30,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.webkino.ui.theme.bgGradient
 import com.example.webkino.ui.theme.darkGreyColor
 import com.example.webkino.ui.theme.goldenColor
-import com.example.webkino.ui.theme.lightGreyColor
 import com.example.webkino.ui.theme.offWhiteColor
 
 
@@ -112,27 +108,7 @@ fun HomeScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(12.dp))
 
         // Camera button
-        OutlinedButton(
-            onClick = { /*TODO: Open camera*/ },
-            modifier = Modifier.width(300.dp),
-            shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(1.dp, lightGreyColor),
-        ) {
-            // Camera icon
-            Icon(
-                painter = painterResource(id = R.drawable.camera),
-                contentDescription = stringResource(R.string.icon),
-                modifier = Modifier.size(20.dp),
-                tint = goldenColor
-            )
-            Spacer(modifier = Modifier.width(15.dp))
-            Text(
-                text = stringResource(R.string.shoot_movie),
-                fontSize = 18.sp,
-                color = goldenColor,
-                fontWeight = FontWeight.Light
-            )
-        }
+        CameraButton()
 
         Spacer(modifier = Modifier.weight(1f))
 
