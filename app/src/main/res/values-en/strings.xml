@@ -55,7 +55,8 @@
     <string name="how_to_use">How to use</string>
     <string name="links">Links</string>
     <string name="info_1">This application is a movie catalog, intended for browsing movies using
-        filtering by genre and sorting by popularity or release date.
+        filtering by genre and sorting by popularity or release date. English, Finnish and Russian
+        languages are supported.
     </string>
     <string name="info_2">To open the movie catalog, click the "Movies" button on the home page.
         After the data is loaded, the following screen opens:
@@ -79,4 +80,5 @@
     <string name="info_8">The code, styling and logo are created by Alexander Fedchin and are not allowed to use
         without author\'s permission. All rights reserved.
     </string>
+    <string name="app_screenshot">App screenshot</string>
 </resources>

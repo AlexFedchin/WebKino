@@ -113,7 +113,7 @@ fun InformationScreen(navController: NavHostController) {
                         Spacer(modifier = Modifier.weight(1f))
                         Image(
                             painter = painterResource(id = R.drawable.screenshot_1),
-                            contentDescription = "App screenshot",
+                            contentDescription = stringResource(id = R.string.app_screenshot),
                             modifier = Modifier
                                 .height(400.dp)
                                 .padding(vertical = 8.dp)

@@ -55,7 +55,8 @@
     <string name="how_to_use">Kuinka käyttää</string>
     <string name="links">Linkit</string>
     <string name="info_1">Tämä sovellus on elokuvakatalogi, tarkoitettu elokuvien selaamiseen käyttämällä
-        suodatusta genreittäin ja lajittelua suosion tai julkaisupäivän mukaan.
+        suodatusta genreittäin ja lajittelua suosion tai julkaisupäivän mukaan. Suomeksi, englanniksi ja venäjäksi
+         kieliä tuetaan.
     </string>
     <string name="info_2">Avataksesi elokuvakatalogin, klikkaa "Elokuvat" -painiketta kotisivulla.
         Kun tiedot on ladattu, seuraava näkymä avautuu:
@@ -78,4 +79,5 @@
     <string name="info_8">Koodi, tyyli ja logo on luonut Alexander Fedchin, eikä niitä saa käyttää
         ilman tekijän lupaa. Kaikki oikeudet pidätetään.
     </string>
+    <string name="app_screenshot">Sovelluksen kuvakaappaus</string>
 </resources>
