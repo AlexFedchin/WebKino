@@ -51,4 +51,33 @@
     <string name="sorting_popularity_asc">Popularity (unpopular first)</string>
     <string name="sorting_release_desc">Release date (newest first)</string>
     <string name="sorting_release_asc">Release date (oldest first)</string>
+    <string name="overview">Overview</string>
+    <string name="credits">Credits</string>
+    <string name="how_to_use">How to use</string>
+    <string name="links">Links</string>
+    <string name="info_1">This application is a movie catalog, intended for browsing movies using
+        filtering by genre and sorting by popularity or release date.
+    </string>
+    <string name="info_2">To open the movie catalog, click the "Movies" button on the home page.
+        After the data is loaded, the following screen opens:
+    </string>
+    <string name="info_3">To select one or more genres, click the "Filter" chip on top of the page.
+        To select a sorting method, click the "Sort by" chip on top of the page. If you want to see
+        more details about the movie, click on its card and a detailed description will open.
+    </string>
+    <string name="info_4">You can enable or disable adult content in search results in the
+        settings section (press "Settings" button on the home page to open).
+    </string>
+    <string name="info_5">You can use your own camera to shoot a video by clicking "Shoot your own movie" button on
+        the home page.
+    </string>
+    <string name="info_6">All the movie data is received via the TheMovieDataBase\'s API (see link at the bottom
+        of the page).
+    </string>
+    <string name="info_7">All the icons apart from the logo are taken from the FlatIcon website with free license.
+        The required attribution link is provided at the bottom of the page.
+    </string>
+    <string name="info_8">The code, styling and logo are created by Alexander Fedchin and are not allowed to use
+        without author\'s permission. All rights reserved.
+    </string>
 </resources>

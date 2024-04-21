@@ -100,7 +100,6 @@ fun getDeviceLanguage(context: Context): String {
     return context.resources.configuration.locales.get(0).language
 }
 
-
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -50,4 +50,32 @@
     <string name="sorting_popularity_asc">Suosio (epäsuosittu ensin)</string>
     <string name="sorting_release_desc">Julkaisupäivä (uusin ensin)</string>
     <string name="sorting_release_asc">Julkaisupäivä (vanhin ensin)</string>
+    <string name="overview">Kuvaus</string>
+    <string name="credits">Tekijänoikeus</string>
+    <string name="how_to_use">Kuinka käyttää</string>
+    <string name="links">Linkit</string>
+    <string name="info_1">Tämä sovellus on elokuvakatalogi, tarkoitettu elokuvien selaamiseen käyttämällä
+        suodatusta genreittäin ja lajittelua suosion tai julkaisupäivän mukaan.
+    </string>
+    <string name="info_2">Avataksesi elokuvakatalogin, klikkaa "Elokuvat" -painiketta kotisivulla.
+        Kun tiedot on ladattu, seuraava näkymä avautuu:
+    </string>
+    <string name="info_3">Valitaksesi yhden tai useamman genren, klikkaa "Suodata" -sirua sivun yläosassa.
+        Valitaksesi lajittelumenetelmän, klikkaa "Lajittele" -sirua sivun yläosassa. Jos haluat nähdä
+        enemmän yksityiskohtia elokuvasta, klikkaa sen korttia ja avautuu yksityiskohtainen kuvaus.
+    </string>
+    <string name="info_4">Voit ottaa käyttöön tai poistaa aikuisille suunnatun sisällön hakutuloksista
+        asetukset-osiossa (painamalla "Asetukset" -painiketta kotisivulla avautuaksesi).
+    </string>
+    <string name="info_5">Voit käyttää omaa kameraasi kuvataksesi videon klikkaamalla "Kuvaa oma elokuvasi" -painiketta
+        kotisivulla.
+    </string>
+    <string name="info_6">Kaikki elokuvatiedot saadaan TheMovieDataBase\'n API:sta (katso linkki sivun alaosassa).
+    </string>
+    <string name="info_7">Kaikki ikonit paitsi logo on otettu FlatIcon-verkkosivustolta ilmaisella lisenssillä.
+        Vaadittu attribuutiolinkki on annettu sivun alaosassa.
+    </string>
+    <string name="info_8">Koodi, tyyli ja logo on luonut Alexander Fedchin, eikä niitä saa käyttää
+        ilman tekijän lupaa. Kaikki oikeudet pidätetään.
+    </string>
 </resources>

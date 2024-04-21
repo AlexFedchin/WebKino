@@ -161,7 +161,7 @@ fun HomeScreen(navController: NavHostController) {
                 modifier = Modifier.size(30.dp)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.information),
+                    painter = painterResource(R.drawable.question_mark),
                     contentDescription = stringResource(R.string.icon),
                     tint = lightGreyColor
                 )
