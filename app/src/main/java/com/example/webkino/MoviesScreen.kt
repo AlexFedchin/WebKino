@@ -108,6 +108,8 @@ fun MoviesScreen(navController: NavHostController) {
     var isLoading by remember { mutableStateOf(true) }
     // Variable to hold the current page number
     var currentPage by remember { mutableIntStateOf(1) }
+
+    // Variable to parse names of genres from resource file
     val genreNames = listOf<String>(
         stringResource(R.string.genre_action),
         stringResource(R.string.genre_adventure),
@@ -161,15 +163,24 @@ fun MoviesScreen(navController: NavHostController) {
     var selectedGenres by remember { mutableStateOf(listOf<Int>()) }
     selectedGenres = genres.filter { it.isChecked }.map { it.id }
 
+    // Variable to parse names of sorting methods from resource files
+    val sortingNames = listOf<String>(
+        stringResource(R.string.sorting_popularity_desc),
+        stringResource(R.string.sorting_popularity_asc),
+        stringResource(R.string.sorting_release_desc),
+        stringResource(R.string.sorting_release_asc)
+    )
     // Variable that controls visibility of sorting selection dialog
     var showSortingDialog by remember { mutableStateOf(false)}
     // Main variable to hold data about sortingMethods
-    var sortingMethods by remember { mutableStateOf(listOf(
-        SortingMethod("popularity.desc", "Popularity (popular first)", true),
-        SortingMethod("popularity.asc", "Popularity (unpopular first)", false),
-        SortingMethod("primary_release_date.desc", "Release date (newest first)", false),
-        SortingMethod("primary_release_date.asc", "Release date (oldest first)", false),
-    ))}
+    var sortingMethods by remember { mutableStateOf(mutableListOf<SortingMethod>()) }
+    // Adding sorting methods to the sortingMethods variable
+    LaunchedEffect(Unit) {
+        sortingMethods.add(SortingMethod("popularity.desc", sortingNames[0], true))
+        sortingMethods.add(SortingMethod("popularity.asc", sortingNames[1], false))
+        sortingMethods.add(SortingMethod("primary_release_date.desc", sortingNames[2], false))
+        sortingMethods.add(SortingMethod("primary_release_date.asc", sortingNames[3], false))
+    }
     // Temporary variable to edit in the sorting method selection dialog
     var temporarySortingMethods by remember { mutableStateOf(sortingMethods.map { it.copy() }.toList())}
     // Variable to pass to Retrofit instance
@@ -280,14 +291,14 @@ fun MoviesScreen(navController: NavHostController) {
                         .padding(16.dp, 0.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Display the list of movies using LazyColumn
+                    // Display the list of movies using LazyColumn and page switching buttons
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                     item {
-                        Spacer(modifier = Modifier.height(38.dp))
+                        Spacer(modifier = Modifier.height(40.dp))
                     }
                         items(moviesState.value) { movie ->
                             MovieCard(movie = movie, navController = navController)
@@ -349,11 +360,12 @@ fun MoviesScreen(navController: NavHostController) {
                     }
                 }
 
-                // Display filters and sorting chips
+                // Display filters and sorting buttons
                 Column {
-                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Spacer(modifier = Modifier.weight(1f))
@@ -367,7 +379,7 @@ fun MoviesScreen(navController: NavHostController) {
                             },
                             image = painterResource(R.drawable.filter)
                         )
-                        Spacer(modifier = Modifier.width(30.dp))
+                        Spacer(modifier = Modifier.weight(1f))
                         // Sorting selection chip
                         FilterChip(
                             text = stringResource(id = R.string.sort_by),
@@ -384,7 +396,10 @@ fun MoviesScreen(navController: NavHostController) {
 
                 // Show sorting method selection dialog
                 if (showSortingDialog) {
-                    Dialog(onDismissRequest = {}) {
+                    Dialog(onDismissRequest = {
+                        showSortingDialog = false
+                        temporarySortingMethods = sortingMethods.map { it.copy() }
+                    }) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -434,7 +449,8 @@ fun MoviesScreen(navController: NavHostController) {
                                                 showSortingDialog = false
                                                 isLoading = true
                                                 currentPage = 1
-                                                sortingMethods = temporarySortingMethods.map { it.copy() }
+                                                sortingMethods =
+                                                    temporarySortingMethods.map { it.copy() }.toMutableList()
                                                 selectedSortingMethod = sortingMethods.find { it.isSelected }?.id
                                                 fetchMovies(currentPage, selectedGenres, selectedSortingMethod)
                                             },
@@ -456,7 +472,11 @@ fun MoviesScreen(navController: NavHostController) {
 
                 // Display genre selection dialog
                 if (showFiltersDialog) {
-                    Dialog(onDismissRequest = {}) {
+                    Dialog(onDismissRequest =
+                    {
+                        showFiltersDialog = false
+                        temporaryGenres = genres.map { it.copy() }
+                    }) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()

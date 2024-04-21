@@ -46,4 +46,8 @@
     <string name="genre_war">Sota</string>
     <string name="genre_western">Lännenelokuva</string>
     <string name="select_sorting_method">Valitse lajittelutapa</string>
+    <string name="sorting_popularity_desc">Suosio (suosittu ensin)</string>
+    <string name="sorting_popularity_asc">Suosio (epäsuosittu ensin)</string>
+    <string name="sorting_release_desc">Julkaisupäivä (uusin ensin)</string>
+    <string name="sorting_release_asc">Julkaisupäivä (vanhin ensin)</string>
 </resources>

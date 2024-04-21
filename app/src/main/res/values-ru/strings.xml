@@ -6,11 +6,11 @@
     <string name="information">Информация</string>
     <string name="back">Назад</string>
     <string name="logo">Логотип</string>
-    <string name="previous">Предыдущая</string>
-    <string name="next">Следующая</string>
+    <string name="previous">Предыдущ.</string>
+    <string name="next">Следующ.</string>
     <string name="sort_by">Сорт. по</string>
     <string name="filter">Фильтр</string>
-    <string name="apply">Применить</string>
+    <string name="apply">Ок</string>
     <string name="cancel">Отмена</string>
     <string name="select_genres">Выберите жанры</string>
     <string name="shoot_movie">Снять свой фильм</string>
@@ -45,5 +45,9 @@
     <string name="genre_thriller">Триллер</string>
     <string name="genre_war">Военный</string>
     <string name="genre_western">Вестерн</string>
-    <string name="select_sorting_method">Выберите метод сортировки</string>
+    <string name="select_sorting_method">Выберите способ сортировки</string>
+    <string name="sorting_popularity_desc">Популярность (сначала популярные)</string>
+    <string name="sorting_popularity_asc">Популярность (сначала непопулярные)</string>
+    <string name="sorting_release_desc">Дата выхода (сначала новые)</string>
+    <string name="sorting_release_asc">Дата выхода (сначала старые)</string>
 </resources>

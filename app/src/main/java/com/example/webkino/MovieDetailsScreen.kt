@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -182,162 +183,162 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
+                            .padding(16.dp, 0.dp)
                     ) {
-                        // Display poster and main ifo next to it
-                        Row(modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)) {
-                            // Display the poster if loaded successfully and placeholder if not
-                            if (movieDetails.poster_image == null) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.poster_not_found),
-                                    contentDescription = movieDetails.title,
-                                    modifier = Modifier.height(200.dp))
-                            } else {
-                                Image(
-                                    bitmap = movieDetails.poster_image!!,
-                                    contentDescription = movieDetails.title,
-                                    modifier = Modifier.height(200.dp))
-                            }
-                            Column(modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 0.dp)) {
-                                // Display movie title
-                                Text(
-                                    text = movieDetails.title,
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = offWhiteColor,
-                                )
-
-                                Spacer(modifier = Modifier.height(4.dp))
-
-                                // Display movie slogan
-                                if (movieDetails.tagline?.isNotEmpty() == true) {
-                                    Text(
-                                        text = movieDetails.tagline,
-                                        fontSize = 12.sp,
-                                        fontStyle = FontStyle.Italic,
-                                        color = lightGreyColor,
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                // Display movie's genres
-                                FlowRow {
-                                    for (genre in movieDetails.genres) {
-                                        GenreChip(
-                                            text = genre.name,
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            // Display poster and main ifo next to it
+                            item {
+                                Row(modifier = Modifier.padding(top =  16.dp)) {
+                                    // Display the poster if loaded successfully and placeholder if not
+                                    if (movieDetails.poster_image == null) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.poster_not_found),
+                                            contentDescription = movieDetails.title,
+                                            modifier = Modifier.height(200.dp))
+                                    } else {
+                                        Image(
+                                            bitmap = movieDetails.poster_image!!,
+                                            contentDescription = movieDetails.title,
+                                            modifier = Modifier.height(200.dp))
+                                    }
+                                    Column(modifier = Modifier.padding(start = 16.dp)) {
+                                        // Display movie title
+                                        Text(
+                                            text = movieDetails.title,
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = offWhiteColor,
                                         )
-                                        Spacer(modifier = Modifier
-                                            .width(6.dp)
-                                            .height(24.dp))
+
+                                        // Display movie slogan
+                                        if (movieDetails.tagline?.isNotEmpty() == true) {
+                                            Text(
+                                                text = movieDetails.tagline,
+                                                fontSize = 12.sp,
+                                                fontStyle = FontStyle.Italic,
+                                                color = lightGreyColor,
+                                                modifier = Modifier.padding(top = 4.dp)
+                                            )
+                                        }
+
+                                        // Display movie's genres
+                                        FlowRow(modifier = Modifier.padding(top = 8.dp)) {
+                                            movieDetails.genres.forEachIndexed { index, genre ->
+                                                GenreChip(
+                                                    text = genre.name,
+                                                )
+                                                // Add spacer if it's not the last genre
+                                                if (index != movieDetails.genres.lastIndex || movieDetails.genres.size == 1) {
+                                                    Spacer(modifier = Modifier
+                                                        .width(6.dp)
+                                                        .height(24.dp))
+                                                }
+                                            }
+                                        }
+
+                                        HorizontalDivider(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(0.dp, 6.dp, 0.dp, 10.dp),
+                                            color = lightGreyColor,
+                                            thickness = 1.dp
+                                        )
+
+                                        // Display release year
+                                        Row {
+                                            Text(
+                                                text = "${stringResource(R.string.year)}: ",
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = offWhiteColor,
+                                            )
+                                            Text(
+                                                text = if (movieDetails.release_date.isNotEmpty()) movieDetails.release_date.substring(0, 4) else stringResource(R.string.unknown),
+                                                fontSize = 14.sp,
+                                                color = offWhiteColor,
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.height(8.dp))
+
+                                        // Display status of the movie
+                                        Row {
+                                            Text(
+                                                text = "${stringResource(R.string.status)}: ",
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = offWhiteColor,
+                                            )
+                                            Text(
+                                                text = movieDetails.status.ifEmpty {
+                                                    stringResource(R.string.unknown)
+                                                },
+                                                fontSize = 14.sp,
+                                                color = offWhiteColor,
+                                            )
+                                        }
                                     }
                                 }
+                            }
 
-                                HorizontalDivider(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(0.dp, 8.dp, 0.dp, 10.dp),
-                                    color = lightGreyColor,
-                                    thickness = 1.dp
+                            // Display movie's description
+                            item {
+                                Text(
+                                    text = "${stringResource(R.string.description)}:",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = offWhiteColor,
+                                    modifier = Modifier.padding(top = 10.dp, bottom = 8.dp)
+                                )
+                                Text(
+                                    text = movieDetails.overview.ifEmpty {
+                                        stringResource(R.string.no_description)
+                                    },
+                                    fontSize = 16.sp,
+                                    color = offWhiteColor,
+                                    style = TextStyle(lineHeight = 24.sp)
+                                )
+                            }
+
+                            // Display countries of production
+                            item {
+                                Text(
+                                    text = "${stringResource(R.string.country)}: ",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = offWhiteColor,
+                                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                                )
+                                Text(
+                                    text = if (movieDetails.production_countries.isNotEmpty()) {
+                                        movieDetails.production_countries.joinToString(separator = ", ") { it.name }
+                                    } else {
+                                        stringResource(R.string.unknown)
+                                    },
+                                    fontSize = 16.sp,
+                                    color = offWhiteColor,
+                                    style = TextStyle(lineHeight = 24.sp)
+                                )
+                            }
+
+                            // Display movie's rating in stars
+                            item {
+                                Text(
+                                    text = "${stringResource(R.string.rating)}:",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = offWhiteColor,
+                                    modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 8.dp)
                                 )
 
-                                // Display release year
-                                Row {
-                                    Text(
-                                        text = "${stringResource(R.string.year)}: ",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = offWhiteColor,
-                                    )
-                                    Spacer(modifier = Modifier.width(2.dp))
-                                    Text(
-                                        text = if (movieDetails.release_date.isNotEmpty()) movieDetails.release_date.substring(0, 4) else stringResource(R.string.unknown),
-                                        fontSize = 14.sp,
-                                        color = offWhiteColor,
-                                    )
+                                // Display movie's rating in stars
+                                RatingStars(movieDetails.vote_average)
 
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                // Display countries of production
-                                Row {
-                                    Text(
-                                        text = "${stringResource(R.string.country)}: ",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = offWhiteColor,
-                                    )
-                                    Spacer(modifier = Modifier.width(2.dp))
-
-                                    Text(
-                                        text = if (movieDetails.production_countries.isNotEmpty()) {
-                                            movieDetails.production_countries.joinToString(separator = ", ") { it.name }
-                                        } else {
-                                            stringResource(R.string.unknown)
-                                        },
-                                        fontSize = 14.sp,
-                                        color = offWhiteColor,
-                                    )
-
-
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Row {
-                                    Text(
-                                        text = "${stringResource(R.string.status)}: ",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = offWhiteColor,
-                                    )
-                                    
-                                    Spacer(modifier = Modifier.width(2.dp))
-
-                                    Text(
-                                        text = movieDetails.status.ifEmpty {
-                                            stringResource(R.string.unknown)
-                                        },
-                                        fontSize = 14.sp,
-                                        color = offWhiteColor,
-                                    )
-
-                                }
+                                Spacer(modifier = Modifier.height(16.dp))
                             }
                         }
-
-                        // Display movie's description
-                        Text(
-                            text = "${stringResource(R.string.description)}:",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = offWhiteColor,
-                            modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
-                        )
-                        Text(
-                            text = movieDetails.overview.ifEmpty {
-                                stringResource(R.string.no_description)
-                            },
-                            fontSize = 16.sp,
-                            color = offWhiteColor,
-                            style = TextStyle(lineHeight = 24.sp),
-                            modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Display movie's rating
-                        Text(
-                            text = "${stringResource(R.string.rating)}:",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = offWhiteColor,
-                            modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
-                        )
-                        
-                        // Display movie's rating in stars
-                        RatingStars(movieDetails.vote_average)
                     }
                 }
             } else {

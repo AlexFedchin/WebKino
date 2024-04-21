@@ -47,7 +47,8 @@
     <string name="genre_thriller">Thriller</string>
     <string name="genre_war">War</string>
     <string name="genre_western">Western</string>
-
-
-
+    <string name="sorting_popularity_desc">Popularity (popular first)</string>
+    <string name="sorting_popularity_asc">Popularity (unpopular first)</string>
+    <string name="sorting_release_desc">Release date (newest first)</string>
+    <string name="sorting_release_asc">Release date (oldest first)</string>
 </resources>

@@ -32,10 +32,10 @@ fun FilterChip(text: String, onClick: () -> Unit, image: Painter) {
                 shape = RoundedCornerShape(24.dp)
             )
             .padding(horizontal = 16.dp, vertical = 6.dp)
-            .width(110.dp),
+            .width(100.dp),
         contentAlignment = Alignment.Center
     ) {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painter = image,
                 contentDescription = stringResource(R.string.icon),
