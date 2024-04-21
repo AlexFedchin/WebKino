@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -68,7 +69,7 @@ interface MovieDetailsApiService {
     fun getMovieDetail(
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String = API_KEY,
-        @Query("language") language: String = "en-US"
+        @Query("language") language: String
     ): Call<MovieDetails>
 }
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -77,6 +78,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
     // Define a state for holding the movie details
     val movieDetailState = remember { mutableStateOf<MovieDetails?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    val deviceLanguage = getDeviceLanguage(LocalContext.current)
 
     // Create a Retrofit instance
     val retrofit = Retrofit.Builder()
@@ -89,7 +91,7 @@ fun MovieDetailsScreen(navController: NavHostController, movieId: Int) {
 
     // Function for fetching movie details
     fun fetchMovieDetail(movieId: Int) {
-        service.getMovieDetail(movieId = movieId).enqueue(object : Callback<MovieDetails> {
+        service.getMovieDetail(movieId = movieId, language = deviceLanguage).enqueue(object : Callback<MovieDetails> {
             override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
                 if (response.isSuccessful) {
                     val movieDetail = response.body()

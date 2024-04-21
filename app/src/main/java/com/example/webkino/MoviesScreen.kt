@@ -1,6 +1,7 @@
 package com.example.webkino
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -87,30 +89,32 @@ interface MovieApiService {
         @Query("page") page: Int = 1, // Default page is 1
         @Query("include_adult") includeAdult: Boolean = adultContentAllowed,
         @Query("include_video") includeVideo: Boolean = false,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String,
         @Query("sort_by") sortBy: String = "",
         @Query("with_genres") genres: String = ""
     ): Call<MovieResponse>
 }
 
-// Function to initialize genres
+// Function to get the device's selected language
+fun getDeviceLanguage(context: Context): String {
+    return context.resources.configuration.locales.get(0).language
+}
 
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesScreen(navController: NavHostController) {
-    val saveableStateKey = "MoviesScreenState"
-
     // Define a state for holding the list of movies
     val moviesState = remember { mutableStateOf<List<Movie>>(emptyList()) }
     val movieResponseState = remember { mutableStateOf<MovieResponse?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     // Variable to hold the current page number
     var currentPage by remember { mutableIntStateOf(1) }
+    val deviceLanguage = getDeviceLanguage(LocalContext.current)
 
     // Variable to parse names of genres from resource file
-    val genreNames = listOf<String>(
+    val genreNames = listOf(
         stringResource(R.string.genre_action),
         stringResource(R.string.genre_adventure),
         stringResource(R.string.genre_animation),
@@ -164,7 +168,7 @@ fun MoviesScreen(navController: NavHostController) {
     selectedGenres = genres.filter { it.isChecked }.map { it.id }
 
     // Variable to parse names of sorting methods from resource files
-    val sortingNames = listOf<String>(
+    val sortingNames = listOf(
         stringResource(R.string.sorting_popularity_desc),
         stringResource(R.string.sorting_popularity_asc),
         stringResource(R.string.sorting_release_desc),
@@ -198,7 +202,7 @@ fun MoviesScreen(navController: NavHostController) {
     // Function for fetching movie data and posters
     fun fetchMovies(page: Int = currentPage, genres: List<Int> = selectedGenres, sortBy: String? = selectedSortingMethod) {
         val includeAdult = adultContentAllowed // Get the current value of adultContentAllowed
-        service.getMovies(page = page, genres = genres.joinToString("|"), sortBy = sortBy ?: "popularity.desc", includeAdult = includeAdult).enqueue(object : Callback<MovieResponse> {
+        service.getMovies(page = page, genres = genres.joinToString("|"), sortBy = sortBy ?: "popularity.desc", includeAdult = includeAdult, language = deviceLanguage).enqueue(object : Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 if (response.isSuccessful) {
                     val movieResponse = response.body()
