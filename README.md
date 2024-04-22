@@ -8,7 +8,7 @@ languages are supported.
 ## How to run
 To run the application, you can either `git clone` this repository and open it as an Android Studio
 project so that you can run it in an emulator or on your physical device using Developer Options,
-or download a WebKino.apk release file from the top layer of this repository on your device and
+or download a `WebKino.apk` release file from the top layer of this repository on your device and
 install the app directly on your phone.
 
 ## How to use
