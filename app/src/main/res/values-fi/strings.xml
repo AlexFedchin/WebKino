@@ -54,6 +54,7 @@
     <string name="credits">Tekijänoikeus</string>
     <string name="how_to_use">Kuinka käyttää</string>
     <string name="links">Linkit</string>
+    <string name="camera_permission_denied">Kameran lupa evätty</string>
     <string name="info_1">Tämä sovellus on elokuvakatalogi, tarkoitettu elokuvien selaamiseen käyttämällä
         suodatusta genreittäin ja lajittelua suosion tai julkaisupäivän mukaan. Suomeksi, englanniksi ja venäjäksi
          kieliä tuetaan.

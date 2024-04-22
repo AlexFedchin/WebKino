@@ -1,10 +1,13 @@
 package com.example.webkino
 
 import android.Manifest
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -121,16 +123,34 @@ fun HomeScreen(navController: NavHostController) {
 
         // Camera button
         val context = LocalContext.current
+        val launcher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, open the camera in video mode
+                val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                context.startActivity(intent)
+            } else {
+                // Permission denied, show the toast
+                showCameraPermissionDeniedToast(context)
+            }
+        }
+
         OutlinedButton(
             onClick = {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    // Open the camera in video mode
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    // Permission already granted, open the camera
                     val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
                     context.startActivity(intent)
                 } else {
                     // Request camera permission
-                    ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.CAMERA), 0)
-                }},
+                    launcher.launch(Manifest.permission.CAMERA)
+                }
+            },
             modifier = Modifier.width(300.dp),
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, lightGreyColor),
@@ -150,6 +170,7 @@ fun HomeScreen(navController: NavHostController) {
                 fontWeight = FontWeight.Light
             )
         }
+
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -171,6 +192,12 @@ fun HomeScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.weight(0.1f))
     }
 }
+
+// Outside of the composable
+fun showCameraPermissionDeniedToast(context: Context) {
+    Toast.makeText(context, context.getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT).show()
+}
+
 
 @Preview
 @Composable
