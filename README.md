@@ -5,6 +5,12 @@ This application is a movie catalog, intended for browsing movies using
 filtering by genre and sorting by popularity or release date. English, Finnish and Russian
 languages are supported.
 
+## How to run
+To run the application, you can either `git clone` this repository and open it as an Android Studio
+project so that you can run it in an emulator or on your physical device using Developer Options,
+or download a `WebKino.apk` release file from the top layer of this repository on your device and
+install the app directly on your phone.
+
 ## How to use
 To open the movie catalog, click the "Movies" button on the home page.
 After the data is loaded, you will see a list of movies. 
