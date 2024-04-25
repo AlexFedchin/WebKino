@@ -24,6 +24,7 @@
     <string name="no_description">Без описания</string>
     <string name="oops">Упс!</string>
     <string name="movie_not_found">Этот фильм не найден.</string>
+    <string name="movies_not_found">Фильмы не найдены.</string>
     <string name="try_again">Пожалуйста, попробуйте ещё раз.</string>
     <string name="details">Детали</string>
     <string name="genre_action">Боевик</string>

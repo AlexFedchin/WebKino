@@ -24,6 +24,7 @@
     <string name="no_description">Ei kuvausta</string>
     <string name="oops">Hups!</string>
     <string name="movie_not_found">Tätä elokuvaa ei löytynyt.</string>
+    <string name="movies_not_found">Elokuvia ei löydy.</string>
     <string name="try_again">Yritä uudelleen.</string>
     <string name="details">Tiedot</string>
     <string name="genre_action">Toiminta</string>

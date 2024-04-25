@@ -280,6 +280,7 @@ fun MoviesScreen(navController: NavHostController) {
                 CircularProgressIndicator(color = goldenColor)
             }
         } else if (moviesState.value.isEmpty()) {
+            // Show error message if no movies found
             Box(modifier = Modifier
                 .background(brush = bgGradient)
                 .fillMaxSize()
@@ -288,14 +289,14 @@ fun MoviesScreen(navController: NavHostController) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "Oops... Movies not found.",
+                        text = stringResource(id = R.string.oops) + stringResource(id = R.string.movies_not_found),
                         color = goldenColor,
                         modifier = Modifier.padding(bottom = 8.dp),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Please, try again.",
+                        text = stringResource(id = R.string.try_again),
                         color = offWhiteColor,
                         modifier = Modifier.padding(bottom = 10.dp),
                         fontSize = 20.sp

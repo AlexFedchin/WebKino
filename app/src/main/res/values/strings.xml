@@ -26,6 +26,7 @@
     <string name="no_description">No description</string>
     <string name="oops">Oops!</string>
     <string name="movie_not_found">This movie was not found.</string>
+    <string name="movies_not_found">Movies not found.</string>
     <string name="try_again">Please, try again.</string>
     <string name="details">Details</string>
     <string name="genre_action">Action</string>
