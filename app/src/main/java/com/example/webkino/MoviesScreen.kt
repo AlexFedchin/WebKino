@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -72,9 +74,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.net.URL
-
-// Define your API key here
-const val API_KEY = "abf3a6ac8c9d2e33c91d318ea187ea19"
 
 // Define the base URL of the API
 const val BASE_URL = "https://api.themoviedb.org/3/"
@@ -280,7 +279,48 @@ fun MoviesScreen(navController: NavHostController) {
                 .background(brush = bgGradient), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = goldenColor)
             }
-        } else {
+        } else if (moviesState.value.isEmpty()) {
+            Box(modifier = Modifier
+                .background(brush = bgGradient)
+                .fillMaxSize()
+                .padding(innerPadding)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "Oops... Movies not found.",
+                        color = goldenColor,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Please, try again.",
+                        color = offWhiteColor,
+                        modifier = Modifier.padding(bottom = 10.dp),
+                        fontSize = 20.sp
+                    )
+                    IconButton(
+                        onClick =
+                        {
+                            isLoading = true
+                            fetchMovies()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = stringResource(id = R.string.icon),
+                            tint = offWhiteColor,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+
+        }
+        else  {
             // Show UI if nothing is loading
             Box(modifier = Modifier
                 .background(brush = bgGradient)

@@ -32,6 +32,5 @@ fun Navigation() {
             backStackEntry.arguments?.getString("movieId")?.toIntOrNull()
                 ?.let { MovieDetailsScreen(navController = navController, it) }
         }
-
     }
 }

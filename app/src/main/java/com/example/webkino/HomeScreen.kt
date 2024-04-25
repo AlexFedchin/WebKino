@@ -34,18 +34,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.webkino.ui.theme.bgGradient
 import com.example.webkino.ui.theme.darkerGreyColor
 import com.example.webkino.ui.theme.goldenColor
 import com.example.webkino.ui.theme.lightGreyColor
 import com.example.webkino.ui.theme.offWhiteColor
-
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
@@ -138,11 +135,7 @@ fun HomeScreen(navController: NavHostController) {
 
         OutlinedButton(
             onClick = {
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.CAMERA
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     // Permission already granted, open the camera
                     val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
                     context.startActivity(intent)
@@ -171,7 +164,6 @@ fun HomeScreen(navController: NavHostController) {
             )
         }
 
-
         Spacer(modifier = Modifier.weight(1f))
 
         // Button to switch to information screen
@@ -193,15 +185,6 @@ fun HomeScreen(navController: NavHostController) {
     }
 }
 
-// Outside of the composable
 fun showCameraPermissionDeniedToast(context: Context) {
     Toast.makeText(context, context.getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT).show()
-}
-
-
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    val navController = rememberNavController()
-    HomeScreen(navController = navController)
 }
